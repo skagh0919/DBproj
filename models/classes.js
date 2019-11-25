@@ -2,6 +2,7 @@ module.exports = (sequelize, Datatypes) => {
     return sequelize.define("Classes", {
         classId: {
             type: Datatypes.INTEGER(11),
+            autoIncrement: true,
             allowNull: false,
             unique: true,
             primaryKey: true

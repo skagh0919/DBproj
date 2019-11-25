@@ -20,6 +20,7 @@ server.use((req, res, next) => {
 server.use("/login", require("./routes/login"));        // 로그인 관련 API
 server.use("/register", require("./routes/register"));  // 회원가입 관련 API
 server.use("/", require("./routes/index"));             // 메인 페이지 관련 API
+server.use("/classes", require("./routes/classes"));    // 과목 페이지 관련 API
 
 // 404 not found 처리
 server.use((req, res, next) => {

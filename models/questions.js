@@ -2,6 +2,7 @@ module.exports = (sequelize, Datatypes) => {
     return sequelize.define("Questions", {
         question_id: {
             type: Datatypes.INTEGER(11),
+            autoIncrement: true,
             allowNull: false,
             unique: true,
             primaryKey: true
