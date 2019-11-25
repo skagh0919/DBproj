@@ -5,15 +5,15 @@ let router = express.Router();
 router.post("/", (req, res) => {
     let data = req.body;
 
-    if(!data.id || !data.pw) {
+    if(!data.em || !data.pw) {
         console.log(data);
         res.json({"result": "short"});
         return;
     }
 
-    models.Member.findOne({
+    models.Users.findOne({
         where: {
-            loginId: data.id,
+            email: data.em,
             password: data.pw
         }
     }).then(result => {

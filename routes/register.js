@@ -4,10 +4,11 @@ let router = express.Router();
 
 router.post("/", (req, res) => {
     let data = req.body;
-    let createMember = (id, pw) => {
-        models.Member.create({
-            loginId: id,
-            password: pw
+    let createMember = (em, pw, utype) => {
+        models.Users.create({
+            email: em,
+            password: pw,
+            type: utype
         }).then(result => {
             res.json({"result": "success"});
         }).catch(error => {
@@ -16,8 +17,7 @@ router.post("/", (req, res) => {
         })
     }
 
-    if(!data.id || !data.pw || !data.is_teacher ||
-        data.id.length < 4 || data.pw.length < 4) {
+    if(!data.em || !data.pw || !data.utype) {
         console.log(data);
         res.json({"result": "short"});
         return;
@@ -25,11 +25,11 @@ router.post("/", (req, res) => {
 
     models.Member.findOne({     // 같은 아이디가 있는지 확인 
         where: {
-            loginId: data.id
+            email: data.em
         }
     }).then(result => {
         if(!result) {  // 없다는 뜻
-            createMember(data.id, data.pw);
+            createMember(data.em, data.pw, data.utype);
         } else {
             res.json({"result": "occupied"});
         }
