@@ -31,7 +31,7 @@ db.Users.hasMany(db.Solves, {foreignKey: {name: "user_id", primaryKey: true, all
 db.Classes.hasMany(db.Lectures, {foreignKey: {name: "class_id", allowNull: false}, onDelete: "cascade"});
 db.Lectures.hasMany(db.Lecture_Keywords, {foreignKey: {name: "lecture_id", allowNull: false}, onDelete: "cascade"});
 db.Lectures.hasMany(db.Questions, {foreignKey: {name: "lecture_id", allowNull: false}, onDelete: "cascade"});
-db.Lectures.hasMany(db.Question_Keywords, {foreignKey: {name: "lecture_id", allowNull: false, primaryKey: true}, onDelete: "cascade"});
+db.Lecture_Keywords.hasMany(db.Question_Keywords, {foreignKey: {name: "keyword_id", allowNull: false, primaryKey: true}, onDelete: "cascade"});
 db.Questions.hasMany(db.Question_Keywords, {foreignKey: {name: "question_id", allowNull: false, primaryKey: true}, onDelete: "cascade"});
 db.Questions.hasMany(db.Solves, {foreignKey: {name: "question_id", primaryKey: true, allowNull: false}});
 db.Questions.hasMany(db.Question_Bogi, {foreignKey: {name: "question_id", primaryKey: true, allowNull: false}});

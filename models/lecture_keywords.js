@@ -1,6 +1,6 @@
 module.exports = (sequelize, Datatypes) => {
     return sequelize.define("Lecture_Keywords", {
-        id: {
+        keywordId: {
             type: Datatypes.INTEGER(11),
             autoIncrement: true,
             allowNull: false,
