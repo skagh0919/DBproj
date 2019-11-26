@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
     })
 });
 
-router.post("/create", (req, res) => {
+router.post("/", (req, res) => {
     let data = req.body;
 
     if(!data.cap || !data.name){
@@ -61,7 +61,7 @@ router.put("/", (req, res) => {
 router.delete("/", (req, res) => {
     let data = req.body;
 
-    if(data.issure !== true || typeof data.id !== "number") {
+    if(data.issure !== true || typeof data.class_id !== "number") {
         res.json({
             "result": "no_action",
             "log": "make sure to pass 'issure' parameter and post id"
@@ -70,7 +70,7 @@ router.delete("/", (req, res) => {
     }
 
     models.Classes.destroy({
-        where: {master_id: data.id}
+        where: {class_id: data.class_id}
     }).then(result => {
         res.json({"result": "success"});
     }).catch(err => {

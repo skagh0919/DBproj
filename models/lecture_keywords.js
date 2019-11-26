@@ -9,7 +9,8 @@ module.exports = (sequelize, Datatypes) => {
         },
 		keyword: {
 			type: Datatypes.STRING(255),
-			allowNull: false
+            allowNull: false,
+            unique: true
 		},
         weight: {
             type: Datatypes.FLOAT,
