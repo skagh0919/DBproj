@@ -15,9 +15,6 @@ module.exports = (sequelize, Datatypes) => {
             type: Datatypes.STRING(1023),
             allowNull: false
         },
-        bogi: {
-            type: Datatypes.TEXT
-        },
         answer: {
             type: Datatypes.TEXT,
             allowNull: false

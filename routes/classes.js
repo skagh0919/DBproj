@@ -1,10 +1,23 @@
 const express = require('express');
 let models = require('../models');
 let router = express.Router();
+const sequelize = require('sequelize');
 
+// 모든 과목들 열람
 router.get("/", (req, res) => {
 
-    models.Classes.findAll().then(result => {
+    models.Classes.findAll({
+        attributes: {include: [[sequelize.fn('COUNT', sequelize.col('user_classes.user_id')), "current_num"]]},
+        include: [{
+            model: models.User_Classes,
+            where: {
+                role: {
+                    [sequelize.Op.eq]: "student"
+                }
+            }
+        }],
+        group: ["classes.class_id"]
+    }).then(result => {
         res.json(result);
     }).catch(error => {
         console.error(error);
@@ -12,10 +25,24 @@ router.get("/", (req, res) => {
     })
 });
 
+// 사용자가 생성한 과목들 열람(삭제용 페이지)
+router.get("/:id", (req,res) => {
+    
+    models.Classes.findAll({
+        where: {master_id: req.params.id}
+    }).then(result => {
+        res.json(result);
+    }).catch(error => {
+        console.error(error);
+        res.json({"result": "failed"});
+    })
+});
+
+// 과목 생성
 router.post("/", (req, res) => {
     let data = req.body;
 
-    if(!data.cap || !data.name){
+    if(!data.capacity || !data.name){
         console.log(data);
         res.json({"result": "Not Enough Information"});
         return;
@@ -23,8 +50,8 @@ router.post("/", (req, res) => {
 
     models.Classes.create({
         name: data.name,
-        capacity: data.cap,
-        master_id: data.id
+        capacity: data.capacity,
+        master_id: data.master_id
     }).then(result => {
         res.json({"result": "success"});
     }).catch(error => {
@@ -34,30 +61,7 @@ router.post("/", (req, res) => {
 
 });
 
-router.put("/", (req, res) => {
-    let data = req.body;
-
-    if(!data.cap || !data.name){
-        console.log(data);
-        res.json({"result": "Not Enough Information"});
-        return;
-    }
-
-    models.Classes.update({
-        name: data.name,
-        capacity: data.cap,
-        master_id: data.id
-    }, {
-        where: {master_id: data.id}
-    }).then(result => {
-        res.json({"result": "success"});
-    }).catch(err => {
-        console.error(err);
-        res.json({"result": "failure"});
-    })
-
-});
-
+// 과목 삭제
 router.delete("/", (req, res) => {
     let data = req.body;
 
@@ -70,7 +74,10 @@ router.delete("/", (req, res) => {
     }
 
     models.Classes.destroy({
-        where: {class_id: data.class_id}
+        where: {
+            class_id: data.class_id,
+            master_id: data.master_id
+        }
     }).then(result => {
         res.json({"result": "success"});
     }).catch(err => {

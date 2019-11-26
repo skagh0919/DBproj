@@ -3,10 +3,9 @@ module.exports = (sequelize, Datatypes) => {
         role: {
             type: Datatypes.STRING(255),
             allowNull: false
-        },
-        //userId
-		//classId
+        }
     }, {
-        underscored: true
+        underscored: true,
+        timestamps: false
     });
 };
