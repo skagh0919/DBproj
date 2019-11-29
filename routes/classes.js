@@ -7,16 +7,17 @@ const sequelize = require('sequelize');
 router.get("/", (req, res) => {
 
     models.Classes.findAll({
-        attributes: {include: [[sequelize.fn('COUNT', sequelize.col('user_classes.user_id')), "current_num"]]},
+        attributes: {include: [[sequelize.fn('COUNT', sequelize.col('UserClasses.user_id')), "current_num"]]},
         include: [{
-            model: models.User_Classes,
+            model: models.UserClasses,
+            required: false,
             where: {
                 role: {
                     [sequelize.Op.eq]: "student"
                 }
             }
         }],
-        group: ["classes.class_id"]
+        group: ["Classes.class_id"]
     }).then(result => {
         res.json(result);
     }).catch(error => {
@@ -25,11 +26,11 @@ router.get("/", (req, res) => {
     })
 });
 
-// 사용자가 생성한 과목들 열람(삭제용 페이지)
-router.get("/:id", (req,res) => {
+// 사용자가 생성한 과목들 열람
+router.get("/:master_id", (req,res) => {
     
     models.Classes.findAll({
-        where: {master_id: req.params.id}
+        where: {master_id: req.params.master_id}
     }).then(result => {
         res.json(result);
     }).catch(error => {

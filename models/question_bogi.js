@@ -1,5 +1,5 @@
 module.exports = (sequelize, Datatypes) => {
-    return sequelize.define("Question_Bogi", {
+    return sequelize.define("QuestionBogi", {
         bogiId: {
             type: Datatypes.INTEGER(11),
             autoIncrement: true,

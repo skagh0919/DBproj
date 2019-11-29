@@ -3,12 +3,11 @@ let models = require('../models');
 let router = express.Router();
 
 // 해당 과목의 강의 목록 열람
-router.post("/", (req, res) => {
-    let data = req.body;
-
+router.get("/:class_id", (req, res) => {
+    
     models.Lectures.findAll({
         where: {
-            class_id: data.class_id
+            class_id: req.params.class_id
         }
     }).then(result => {
         res.json(result);
@@ -19,12 +18,12 @@ router.post("/", (req, res) => {
 });
 
 // 해당 강의 정보
-router.post("/:id", (req, res) => {
-    let data = req.body;
+router.get("/:lecture_id", (req, res) => {
+    let data = req.params;
 
     models.Lectures.findOne({
         where: {
-            lecture_id: req.params.id
+            lectureId: data.lecture_id
         }
     }).then(result => {
         res.json(result);
@@ -47,7 +46,7 @@ router.post("/", (req, res) => {
     if(!data.end_time){
         models.Lectures.create({
             name: data.name,
-            start_time: data.start_time,
+            startTime: data.start_time,
             class_id: data.class_id
         }).then(result => {
             res.json({"result": "success"});
@@ -59,8 +58,8 @@ router.post("/", (req, res) => {
     else{
         models.Lectures.create({
             name: data.name,
-            start_time: data.start_time,
-            end_time: data.end_time,
+            startTime: data.start_time,
+            endTime: data.end_time,
             class_id: data.class_id
         }).then(result => {
             res.json({"result": "success"});
@@ -85,7 +84,9 @@ router.delete("/", (req, res) => {
     }
 
     models.Lectures.destroy({
-        where: {lecture_id: data.lecture_id}
+        where: {
+            lectureId: data.lecture_id
+        }
     }).then(result => {
         res.json({"result": "success"});
     }).catch(err => {

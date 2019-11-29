@@ -1,6 +1,6 @@
 module.exports = (sequelize, Datatypes) => {
     return sequelize.define("Questions", {
-        question_id: {
+        questionId: {
             type: Datatypes.INTEGER(11),
             autoIncrement: true,
             allowNull: false,
@@ -23,7 +23,7 @@ module.exports = (sequelize, Datatypes) => {
             type: Datatypes.FLOAT,
             allowNull: false
         },
-        real_difficulty: {
+        realDifficulty: {
             type: Datatypes.FLOAT
         }
     }, {

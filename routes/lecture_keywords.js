@@ -3,13 +3,15 @@ let models = require('../models');
 let router = express.Router();
 
 // 해당 강의 키워드 목록 열람
-router.post("/", (req, res) => {
-    let data = req.body;
+router.get("/:lecture_id", (req, res) => {
+    let data = req.params;
 
-    models.Lecture_Keywords.findAll({
-        where: { lecture_id: data.lecture_id}
+    models.LectureKeywords.findAll({
+        where: {
+            lecture_id: data.lecture_id
+        }
     }).then(result => {
-        res.json({"result": "success"});
+        res.json(result);
     }).catch(err => {
         console.error(err);
         res.json({"result": "failure"});
@@ -21,7 +23,7 @@ router.post("/", (req, res) => {
 router.post("/", (req, res) => {
     let data = req.body;
     let createKeyword = (lecture_id, keyword, weight) => {
-        models.Lecture_Keywords.create({
+        models.LectureKeywords.create({
             lecture_id: lecture_id,
             keyword: keyword,
             weight: weight
@@ -39,7 +41,7 @@ router.post("/", (req, res) => {
         return;
     }
 
-    models.Lecture_Keywords.findOne({
+    models.LectureKeywords.findOne({
         where: {
             keyword: data.keyword
         }
@@ -60,8 +62,11 @@ router.post("/", (req, res) => {
 router.delete("/", (req, res) => {
     let data = req.body;
 
-    models.Lecture_Keywords.destroy({
-        where: {keyword_id: data.keyword_id}
+    models.LectureKeywords.destroy({
+        where: {
+            lecture_id: data.lecture_id,
+            keywordId: data.keyword_id
+        }
     }).then(result => {
         res.json({"result": "success"});
     }).catch(err => {
