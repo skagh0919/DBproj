@@ -32,10 +32,9 @@ router.get("/:lecture_id", (req, res) => {
 router.post("/", (req, res) => {
     let data = req.body;
     var score = 0;
-    let deletePrev = (lid, qid, uid) => {
+    let deletePrev = (qid, uid) => {
         models.Solves.destroy({
             where: {
-                lecture_id: lid,
                 question_id: qid,
                 user_id: uid
             }
@@ -54,8 +53,7 @@ router.post("/", (req, res) => {
             model: models.QuestionKeywords,
         }],
         where: {
-            lecture_id: data.lecture_id,
-            questionId: data.question_id,
+            questionId: data.question_id
         },
         group: ["Questions.question_id"]
     }).then(result => {
@@ -65,18 +63,16 @@ router.post("/", (req, res) => {
         // 기존에 푼 기록 찾기(있으면 삭제)
         models.Solves.findOne({
             where: {
-                lecture_id: data.lecture_id,
                 question_id: data.question_id,
                 user_id: data.user_id
             }
         }).then(result => {
             if(result){
-                deletePrev(result.lecture_id, result.question_id, result.user_id);
+                deletePrev(result.question_id, result.user_id);
                 console.log("delete success");
             }
             // 푼 기록 생성
             models.Solves.create({
-                lecture_id: data.lecture_id,
                 question_id: data.question_id,
                 user_id: data.user_id,
                 stuAnswer: data.stu_answer,
