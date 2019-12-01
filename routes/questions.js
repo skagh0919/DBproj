@@ -61,16 +61,15 @@ router.get("/", (req, res) => {
     // 개별 문제 열람 (보기와 함께)
     else{
 
-        // 강사 시점(/questions?utype=1&lecture_id=n&question_id=n)
+        // 강사 시점(/questions?utype=1&question_id=n)
         if(req.query.utype == 1){
             models.Questions.findOne({
                 attributes: {include: [[sequelize.fn('SUM', sequelize.col('QuestionKeywords.score_portion')), "total_score"]]},
                 include: [{
-                    model: models.QuestionKeywords,
+                    model: models.QuestionKeywords
                 }],
                 where: {
-                    questionId: parseInt(data.question_id),
-                    lecture_id: parseInt(data.lecture_id)
+                    questionId: parseInt(data.question_id)
                 },
                 group: ["Questions.question_id"]
             }).then(result => {
@@ -94,8 +93,7 @@ router.get("/", (req, res) => {
             models.Questions.findOne({
                 attributes: ["question", "type", "question_id"],
                 where: {
-                    questionId: parseInt(data.question_id),
-                    lecture_id: parseInt(data.lecture_id)
+                    questionId: parseInt(data.question_id)
                 }
             }).then(result => {
                 models.QuestionBogi.findAll({
@@ -117,6 +115,51 @@ router.get("/", (req, res) => {
         }
         
     }
+});
+
+// 실질 난이도 계산
+router.put("/:question_id", (req, res) =>{
+    let data = req.params;
+
+    // 해당 문제 평균 점수 계산
+    models.Solves.findOne({
+        attributes: ["question_id", [sequelize.cast(sequelize.fn("avg", sequelize.col("score")), 'signed'),"average"]],
+        where: {question_id: data.question_id},
+        group: ["question_id"]
+    }).then(qavg =>{
+        if(!qavg){
+            res.json({"result": "No one solve this question"});
+            return;
+        }
+        // 해당 문제 총점 계산
+        models.Questions.findOne({
+            attributes: ["question_id", [sequelize.cast(sequelize.fn('SUM', sequelize.col('QuestionKeywords.score_portion')), 'signed'), "total_score"]],
+            include: [{
+                 model: models.QuestionKeywords
+            }],
+            where: {
+                questionId: data.question_id
+            },
+            group: ["Questions.question_id"]
+        }).then(qscore => {
+            // 실질 난이도 수정
+            models.Questions.update(
+                {realDifficulty: 10 * (1 - qavg.dataValues.average/qscore.dataValues.total_score)},
+                {where: {questionId: data.question_id}}
+            ).then(result => {
+                res.json(result);
+            }).catch(err => {
+                console.error(err);
+                res.json({"result": "failure"});
+            })
+        }).catch(err => {
+            console.error(err);
+            res.json({"result": "failure"});
+        })
+    }).catch(err => {
+        console.error(err);
+        res.json({"result": "failure"});
+    })
 });
 
 // 문제 삭제
