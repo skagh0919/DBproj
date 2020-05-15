@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="header.css"> 
+            <link rel="stylesheet" href="classList.css"> 
+            <script src = "js/common.js"></script>
+    </head>
+    <body>
+            <nav class="menu">
+                    <a href="main.html"><img class="logo" src="logo.png" alt="logo"  style="width:150px"/></a>
+                    <ul class="menu list right">
+                                <li><a class="link bank" href="bank.html">문제은행</a></li>
+                                <li><a class="link takingClass" href="takingClass.html">수강 과목</a></li>
+                    <li><a class="link classList" href="classList.html">과목 목록</a></li>
+                    <li><a class="link createClass" href="createClass.html">과목 생성</a></li>
+                    <li><a class="link login" href="login.html">로그인</a></li>
+                    <li><a class="link register" href="register.html">회원가입</a></li>
+                    </ul>
+            </nav>
+            <form>
+                    <label>문제 수:
+                            <input type="text" name="question_num">
+                    </label>
+                    <br />
+                    <label>실질 난이도로 검색(실질: 1 / 일반: 0):
+                            <input type = "text" class = "real">
+                    </label>
+                    <br />
+                    <label>난이도 범위:
+                            <input type="text" name="from">~
+                            <input type="text" name="to">
+                    </label>
+                    <br />
+            <table style="width:400px">
+                    <colgroup>
+                            <col span="1" style="width: 60%;">
+                            <col span="1" style="width: 20%;">
+                    </colgroup>
+                    <thead>
+                            <tr>
+                                    <th>키워드</th>
+                                    <th></th>
+                            </tr>
+                    </thead>
+                    <tbody class="keyword list">
+                            <tr id="row-template" class="keyword item row" >
+                                    <td class="keyword name">키워드이름</td>
+                                    <td class="keyword button"><a href="javascript:void(0);"><img class="add" src="추가.png" alt="add" width="40px"/></a></td>
+                            </tr>
+                    </tbody>
+                </table>
+                <input type="submit" value=" 제출">
+            </form>
+
+            <script>
+                let keyword_list = [];
+                let difficulty_range = [];
+                let lecture_id = localStorage.getItem("lectureId");
+                fetch("http://localhost:3000/bank_question_keywords", {
+                    method:"get"
+            }).then(res => {
+                    return res.json();
+            }).then(res => {
+                console.log(res);
+                const row_template = document.getElementById("row-template");
+                const tbody = row_template.parentElement;
+                for(let i=0; i<res.length; i++) {
+                        let new_template = row_template.cloneNode(true);
+                        new_template.id = "";
+                        let first_td = new_template.getElementsByClassName("keyword name")[0];
+                        first_td.innerText = res[i].keyword;
+                        let button = new_template.getElementsByClassName("keyword button")[0].childNodes[0];
+                        button.onclick = () => {
+                            let keyId = res[i].keyword_id;
+                            keyword_list.push(keyId);
+                            button.style.display = "none";
+                            //button.style.innerText = "이미 추가된 키워드입니다";
+                                        }
+                        tbody.appendChild(new_template);
+                                     } //end of for
+
+                document.forms[0].onsubmit = (e) => {
+                    e.preventDefault();
+                    let data = getFormData(document.forms[0]);
+                    let from = document.getElementsByName("from")[0].value;
+                    let to = document.getElementsByName("to")[0].value;
+                    
+
+                    data.difficulty_range = difficulty_range;
+                    data.keyword_list = keyword_list;
+                    data.question_num = document.getElementsByName("question_num")[0].value;
+
+                    
+
+                    if(keyword_list.length == 0){
+                        alert("키워드를 선택하세요");
+                    }else if ( !reg(document.getElementsByName("from")[0].value)){
+                        alert("숫자로 최소 난이도 범위를 입력하세요");
+                    }else if ( !reg(document.getElementsByName("to")[0].value)){
+                        alert("숫자로 최대 난이도 범위를 입력하세요");
+                    }else if(document.getElementsByName("from")[0].value > document.getElementsByName("to")[0].value){
+                        alert("난이도 범위를 올바르게 입력해주세요");
+                    }else if ( !reg(document.getElementsByName("question_num")[0].value)){
+                        alert("숫자로 문제 수를 입력하세요");
+                    }else if(document.getElementsByClassName("real")[0].value ==""){
+                        alert("실질난이도와 일반 난이도 중 하나를 선택하세요");
+                    }else if(document.getElementsByClassName("real")[0].value != "0" && document.getElementsByClassName("real")[0].value != "1"){
+                        alert("실질난이도와 일반 난이도 중 하나를 선택하세요");
+                    }else{
+                        difficulty_range.push(from);
+                        difficulty_range.push(to);
+                        let numQ = document.getElementsByName("question_num")[0].value;
+                    
+                        data.is_real = (document.getElementsByClassName("real")[0].value=="1");
+                        fetch("http://localhost:3000/question_sets",{
+                        method:"post",
+                        body:JSON.stringify(data),
+                        headers:{
+                                "Content-Type": "application/json"
+                        }
+                    }).then(res=>{
+                        return res.json();
+                    }).then(res=>{
+                        console.log(res);
+                        len = res.length;
+                        console.log("res 길이는");
+                        console.log(len);
+
+                        if(len == 0){
+                        alert("조건을 만족하는 문제가 없습니다");
+                        }else if(len == 1){
+                        let lecture_id = localStorage.getItem("lectureId");
+                        localStorage.setItem("resSet0",JSON.stringify(res[0]));
+                        window.open("questionSet.html","","width=500,height=500");
+                        }else if(len == 4){
+                            let lecture_id = localStorage.getItem("lectureId");
+                            localStorage.setItem("resSet0",JSON.stringify(res[0]));
+                            localStorage.setItem("resSet1",JSON.stringify(res[1]));
+                            localStorage.setItem("resSet2",JSON.stringify(res[2]));
+                            localStorage.setItem("resSet3",JSON.stringify(res[3]));
+                            /*let arr0 = [];
+                            let arr1 = [];
+                            let arr2 = [];
+                            let arr3 = [];
+                            for(var i = 0; i < numQ;i++){
+                                arr0.push(res[0][i].question);
+                                arr1.push(res[1][i].question);
+                                arr2.push(res[2][i].question);
+                                arr3.push(res[3][i].question);
+                            }
+                        localStorage.setItem("resSet0",arr0);
+                        localStorage.setItem("resSet1",arr1);
+                        localStorage.setItem("resSet2",arr2);
+                        localStorage.setItem("resSet3",arr3);*/
+                        window.open("questionSet4.html","","width=500,height=500");
+                    }
+                    })
+
+                    
+                    
+                    
+                    }
+                    
+                }
+            
+
+
+
+            })
+            </script>
+            <script src = "js/header.js"></script>
+    </body>
+    </html>

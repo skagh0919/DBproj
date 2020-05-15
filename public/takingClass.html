@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="header.css"> 
+            <link rel="stylesheet" href="classList.css"> 
+            <script src = "js/common.js"></script>
+    </head>
+    <body>
+            <nav class="menu">
+                    <a href="main.html"><img class="logo" src="logo.png" alt="logo" /></a>
+                    <ul class="menu list right">
+                            <li><a class="link bank" href="bank.html">문제은행</a></li>
+                    <li><a class="link takingClass" href="takingClass.html">수강 과목</a></li>
+                    <li><a class="link classList" href="classList.html">과목 목록</a></li>
+                    <li><a class="link createClass" href="createClass.html">과목 생성</a></li>
+                    <li><a class="link login" href="login.html">로그인</a></li>
+                    <li><a class="link register" href="register.html">회원가입</a></li>
+                    </ul>
+            </nav>
+            <div class = "takingClassList">
+                <table>
+                    <colgroup>
+                        <col span = "1" style = "width: 80%;">
+                        <col span = "1" style = "width: 20%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>과목명</th>
+                            <th></th>
+                        </tr>
+                        <tbody class="class item">
+                                <tr id="row-template" class="class item row">
+                                        <td class="class title">과목이름</td>
+                                        <td class="class button"><button>과목보기</button></td>
+                                </tr>
+                        </tbody>
+                    </thead>
+                </table>
+            </div>
+            <script>
+                let user_id = localStorage.getItem("userId");
+                fetch("http://localhost:3000/user_classes/"+user_id,{
+                    method:"get"
+                }).then(res => {
+                    return res.json();
+                }).then(res => {
+                    console.log(res);
+                    const row_template = document.getElementById("row-template");
+                    const tbody = row_template.parentElement;
+                    for(let i=0; i<res.length; i++) {
+                            
+                            let new_template = row_template.cloneNode(true);
+                            new_template.id = "";
+                            let a = new_template.getElementsByClassName("class title")[0];
+                            console.log(res[i].Class.name);
+                            a.innerText = res[i].Class.name;
+                            tbody.appendChild(new_template);
+                            
+
+                            let button = new_template.getElementsByClassName("class button")[0].childNodes[0];
+                            button.onclick = () => {
+                                localStorage.setItem("classId", res[i].class_id);
+                                console.log(res[i]);
+                                window.location.href = '/lectureList.html';
+                            }
+                    }
+                }).catch(err => {
+                        console.error(err);
+                })
+            </script>
+            <script src = "js/header.js"></script>
+        </body>
+    </html>

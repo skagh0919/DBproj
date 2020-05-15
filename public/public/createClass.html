@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+        <head>
+                <meta charset="utf-8">
+                <link rel="stylesheet" href="header.css"> 
+                <script src = "js/common.js"></script>
+        </head>
+        <body>
+                <nav class="menu">
+                        <a href="main.html"><img class="logo" src="logo.png" alt="logo" /></a>
+                        <ul class="menu list right">
+                        <li><a class="link" href="classList.html">과목 목록</a></li>
+                        <li><a class="link createClass" href="createClass.html">과목 생성</a></li>
+                        <li><a class="link login" href="login.html">로그인</a></li>
+                        <li><a class="link register" href="register.html">회원가입</a></li>
+                        </ul>
+                </nav>
+
+        <label>과목 이름:</label><input type="text" name="name">
+        <br />
+
+        <label>정원</label><input type="text" name="capacity">
+        <input type="button" onclick="submit();" value=" 제출">
+        
+        <script>
+        function submit() {
+                let inputs = document.getElementsByTagName("input");
+                let name = inputs.name.value;
+                let capacity = inputs.capacity.value;
+                
+                fetch("http://localhost:3000/classes", {
+                method:"post",
+                body:JSON.stringify({
+                        name: name,
+                        capacity: capacity,
+                        master_id: localStorage.getItem('userId')
+                }),
+                headers:{
+                        "Content-Type": "application/json"
+                }
+                }).then(res => {
+                        return res.json();
+                }).then(res => {
+                        console.log(res);
+                });
+        }
+        </script>
+        <script src = "js/header.js"></script>
+    </body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+        <head>
+                <meta charset="utf-8">
+                <link rel="stylesheet" href="header.css"> 
+                <script src = "js/common.js"></script>
+                <style>
+                        #list_template { 
+                                display: none;
+                        }
+                </style>
+        </head>
+        <body>
+                <nav class="menu">
+                        <a href="main.html"><img class="logo" src="logo.png" alt="logo"  style="width:150px"/></a>
+                        <ul class="menu list right">
+                                        <li><a class="link bank" href="bank.html">문제은행</a></li>
+                                        <li><a class="link takingClass" href="takingClass.html">수강 과목</a></li>
+                        <li><a class="link classList" href="classList.html">과목 목록</a></li>
+                        <li><a class="link createClass" href="createClass.html">과목 생성</a></li>
+                        <li><a class="link login" href="login.html">로그인</a></li>
+                        <li><a class="link register" href="register.html">회원가입</a></li>
+                        </ul>
+                </nav>
+       
+                <label>강의 이름:
+                        <input type="text" name="lectureName">
+                </label>
+                <br />
+
+                <label>시작 시간:
+                        <input type="datetime-local" name="startTime">
+                </label>
+                <br />
+
+                <label>종료 시간:
+                        <input type="datetime-local" name="endTime">
+                </label>
+                <br />
+
+                <label>강의 키워드:</label>
+                        <input type="text" name="lectureKeyword">
+
+                <label>중요도:</label>
+                        <input type="text" name="weight">
+                <input type="button" onclick="submitKeyword();" value="키워드입력">
+                <br />
+
+
+                <input type="button" onclick="submit();" value="제출">
+                <table>
+                        <colgroup>
+                        <col span="1" style="width: 100px;">
+                        <col span="1" style="width: 100px;">
+                        <col>
+                        </colgroup>
+                        <thead>
+                                <tr>
+                                        <th style="font-size: 10px">키워드</th>
+                                        <th style="font-size: 10px">중요도</th>
+                                </tr>
+                        </thead>
+                        <tbody class = "keyword_list">
+                                <tr class = "keyword_row" id="list_template">
+                                        <td class="keyword" style="font-size: 10px"></td>
+                                        <td class="weight" style="font-size: 10px"></td>
+                                </tr>
+
+                        </tbody>
+                </table>
+    
+        
+        <script>
+                let classId = localStorage.getItem("classId");
+                console.log(classId);
+                let userId = localStorage.getItem("userId");
+                let keywords = [];
+                let importances = [];
+                function submitKeyword(){
+                        let kw = document.querySelector("input[name=lectureKeyword]");
+                        let weight = document.querySelector("input[name=weight]");
+                        console.log(kw.value);
+                        console.log(weight.value);
+
+                        let result = reg(weight.value);
+                        console.log(result);
+
+                        if(!result){
+                                alert("중요도는 숫자로 입력해주세요");
+                                return;
+                        }
+                        
+                        if(!kw.value || !weight.value) {
+                                alert("키워드와 중요도를 입력해주세요");
+                                return;
+                        }
+
+                        if(keywords.length >= 10){
+                                alert("키워드는 최대 10개까지만 입력할 수 있습니다.");
+                        }else{
+                                keywords.push(kw.value);
+                                importances.push(parseInt(weight.value));
+
+                                let list_template = document.getElementById("list_template");
+                                let new_template = list_template.cloneNode(true);
+                                let tbody = list_template.parentNode;
+                                new_template.id = "";
+                                new_template.childNodes[1].innerText = kw.value;
+                                new_template.childNodes[3].innerText = weight.value;
+                                tbody.appendChild(new_template);
+
+                                kw.value = "";
+                                weight.value = "";
+                        }
+                        
+                }
+
+                function submit(){
+                        let inputs = document.getElementsByTagName("input");
+                        let name = inputs.lectureName.value;
+                        let start_time = inputs.startTime.value;
+                        let end_time = inputs.endTime.value;
+
+
+                        console.log(name);
+                        console.log(start_time);
+                        console.log(end_time);
+
+                        let diff = getTimeDiff(end_time, start_time);
+
+                        if(!name || !start_time || !end_time){
+                                console.log("1");
+                                alert("이름 또는 시작시간 또는 종료시간을 제대로 입력하세요");
+                        }else if((keywords.length == 0)||(importances == 0)){
+                                console.log("2");
+                                alert("키워드와 중요도를 하나 이상 입력하세요");
+                        }else if(diff < 0){
+                                alert("종료 시간은 시작 시간 이후여야 합니다.");
+                        }else{
+                                console.log("3");
+                                fetch("http://localhost:3000/lectures", {
+                                method:"post",
+                                body:JSON.stringify({
+                                name: name,
+                                start_time: start_time,
+                                end_time: end_time,
+                                class_id: classId,
+                                user_id: userId,
+                                createdKeywords: keywords,
+                                createdWeights: importances
+                                }),
+                                headers:{
+                                "Content-Type": "application/json"
+                                }
+                                }).then(res => {
+                                        console.log("4");
+                                return res.json();
+                                }).then(res => {
+                                console.log(res);
+                                alert("강의가 성공적으로 생성되었습니다.");
+                                });
+                        }
+                        
+                }
+        </script>
+        <script src = "js/header.js"></script>
+    </body>
+</html>

@@ -1,11 +1,14 @@
 module.exports = (sequelize, Datatypes) => {
-    return sequelize.define("Questions", {
+    return sequelize.define("BankQuestions", {
         questionId: {
             type: Datatypes.INTEGER(11),
-            autoIncrement: true,
             allowNull: false,
             unique: true,
             primaryKey: true
+        },
+        lectureId: {
+            type: Datatypes.INTEGER(11),
+            allowNull: false
         },
 		type: {
 			type: Datatypes.INTEGER(11),
@@ -16,8 +19,7 @@ module.exports = (sequelize, Datatypes) => {
             allowNull: false
         },
         answer: {
-            type: Datatypes.TEXT,
-            allowNull: true
+            type: Datatypes.TEXT
         },
         difficulty: {
             type: Datatypes.FLOAT,

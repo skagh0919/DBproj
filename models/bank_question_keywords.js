@@ -1,18 +1,16 @@
 module.exports = (sequelize, Datatypes) => {
-    return sequelize.define("LectureKeywords", {
+    return sequelize.define("BankQuestionKeywords", {
         keywordId: {
             type: Datatypes.INTEGER(11),
-            autoIncrement: true,
             allowNull: false,
-            unique: true,
             primaryKey: true
         },
-		keyword: {
-			type: Datatypes.STRING(255),
-            allowNull: false
-		},
-        weight: {
-            type: Datatypes.FLOAT,
+        keyword: {
+            type: Datatypes.STRING,
+            allowNull: false,
+        },
+        scorePortion: {
+            type: Datatypes.INTEGER(11),
             allowNull: false
         }
     }, {

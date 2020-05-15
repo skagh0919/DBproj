@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+           
+            <script src = "js/common.js"></script>
+            <style>#row-template{
+                    display : none
+                }</style>
+    </head>
+    <body>
+        <p class="question">문제내용</p>
+    <form>
+        1. 
+        <span name = "b1"> 2번보기 </span>
+    </br>
+        2. 
+        <span name = "b2"> 2번보기 </span>
+    </br>
+        3. 
+        <span name = "b3"> 2번보기 </span>
+    </br>
+        4. 
+        <span name = "b4"> 2번보기 </span>
+    </br>
+        5. 
+        <span name = "b5"> 2번보기 </span>
+    </br>
+        답: 
+        <span name = "answer"> 답 </span>
+        <input type="button" value="닫기" onclick="self.close();">
+    </form>
+    
+        <script>
+            let type = localStorage.getItem("type");
+            let user_id = localStorage.getItem("userId");
+            let question_id = localStorage.getItem("question_id");
+            console.log(question_id);
+            console.log(type);
+            console.log(user_id);
+
+            fetch("http://localhost:3000/questions/?utype="+type+"&question_id="+question_id,{
+                method:"get"
+            }).then(res=>{
+                return res.json();
+            }).then(res=>{
+                console.log(res);
+                console.log(res.question.type);
+                let key_value = res.key_value;
+                let q = document.getElementsByClassName("question")[0];
+                q.innerText = res.question.question;
+                let b1 = document.getElementsByName("b1")[0];
+                let b2 = document.getElementsByName("b2")[0];
+                let b3 = document.getElementsByName("b3")[0];
+                let b4 = document.getElementsByName("b4")[0];
+                let b5 = document.getElementsByName("b5")[0];
+                let an = document.getElementsByName("answer")[0];
+                console.log(b1);
+                console.log(res.bogis[0].bogi);
+                b1.innerText = res.bogis[0].bogi;
+                b2.innerText = res.bogis[1].bogi;
+                b3.innerText = res.bogis[2].bogi;
+                b4.innerText = res.bogis[3].bogi;
+                b5.innerText = res.bogis[4].bogi;
+                an.innerText = res.question.answer;
+
+                document.forms[0].onsubmit = (e) => {
+                    e.preventDefault();
+                    let data = getFormData(document.forms[0]);
+                    data.question_id = question_id;
+                    data.user_id = user_id;
+                    data.key_value = key_value;
+                    fetch("http://localhost:3000/solves", {
+                        method:"post",
+                        body:JSON.stringify(data),
+                        headers:{
+                                "Content-Type": "application/json"
+                        }
+                        }).then(res => {
+                                return res.json();
+                        }).then(res => {
+                                console.log(res);
+                                
+                        });
+
+                
+            }
+        })
+        </script>
+        
+    </body>
+    </html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="header.css"> 
+            <script src = "js/common.js"></script>
+            <style>#row-template,#row-template1,#row-template3{
+                display : none
+            }</style>
+    </head>
+    <body>
+            <nav class="menu">
+                    <a href="main.html"><img class="logo" src="logo.png" alt="logo" /></a>
+                    <ul class="menu list right">
+                    <li><a class="link" href="classList.html">과목 목록</a></li>
+                    <li><a class="link createClass" href="createClass.html">과목 생성</a></li>
+                    <li><a class="link login" href="login.html">로그인</a></li>
+                    <li><a class="link register" href="register.html">회원가입</a></li>
+                    </ul>
+            </nav>
+        <div>
+            <button id="obj-button">객관식</button>
+            <button id="subj-button">주관식</button>
+            <button id="per-button">개별형</button>
+        </div>
+        <div>
+            <div id="obj-container">
+                    <form>
+                            <label>문제:
+                                    <input type="textarea" name="question">
+                            </label>
+                            <br />
+                    
+                            정답:
+                            <br />
+                            <label>1</label>
+                                <input type="radio" name="answer" value="1">
+                                <input type="text" name="questionKey1">
+                            <br />
+                            <label>2</label>
+                                <input type="radio" name="answer" value="2">
+                                <input type="text" name="questionKey2">
+                            <br />
+                            <label>3</label>
+                                <input type="radio" name="answer" value="3">
+                                <input type="text" name="questionKey3">
+                            <br />
+                            <label>4</label>
+                                <input type="radio" name="answer" value="4">
+                                <input type="text" name="questionKey4">
+                            <br />
+                            <label>5</label>
+                                <input type="radio" name="answer" value="5">
+                                <input type="text" name="questionKey5">
+                            
+                            <br />
+            
+                            <label>난이도:
+                                    <input type="text" name="difficulty">
+                            </label>
+                            <br />
+
+                            <table style="width:400px">
+                                <colgroup>
+                                        <col span="1" style="width: 60%;">
+                                        <col span="1" style="width: 20%;">
+                                        <col span="1" style="width: 20%;">
+                                </colgroup>
+                                <thead>
+                                        <tr>
+                                                <th>키워드</th>
+                                                <th>키워드배점</th>
+                                                <th></th>
+                                        </tr>
+                                </thead>
+                                <tbody class="keyword list">
+                                        <tr id="row-template" class="keyword item row" >
+                                                <td class="keyword name"></td>
+                                                <td class="keyword portion"><input type="text" class="scorePortion"></td>
+                                                <td class="keyword button"><a href="javascript:void(0);"><img class="add" src="추가.png" alt="add" width="40px"/></a></td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                            <input type="submit" value=" 제출">
+                    </form>
+            </div>
+
+            <div id="subj-container" style="display:none;">
+                    <form>
+                            <label>문제:
+                                    <input type="textarea" name="question">
+                            </label>
+                            <br />
+                    
+                            <label>정답:
+                                    <input type="text" name="answer">
+                            </label>
+                            <br />
+            
+                            <label>난이도:
+                                    <input type="text" name="difficulty">
+                            </label>
+                            <br />
+                            <table style="width:400px">
+                                <colgroup>
+                                        <col span="1" style="width: 40%;">
+                                        <col span="1" style="width: 20%;">
+                                        <col span="1" style="width: 40%;">
+                                </colgroup>
+                                <thead>
+                                        <tr>
+                                                <th>키워드</th>
+                                                <th>키워드배점</th>
+                                                <th></th>
+                                        </tr>
+                                </thead>
+                                <tbody class="keyword list">
+                                        <tr id="row-template1" class="keyword item row">
+                                                <td class="keyword name"></td>
+                                                <td class="keyword portion"><input type="text" class="scorePortion2"></td>
+                                                <td class="keyword button"><a href="javascript:void(0);"><img class="add" src="추가.png" alt="add" width="40px"/></a></td>
+                                        </tr>
+                                </tbody>
+                            </table>
+
+                            <input type="submit" value=" 제출">
+                </form>
+            </div>
+            <!--개별형 문제 컨테이너-->
+            <div id="per-container" style="display:none;">      
+                <form>
+                        <label>문제:
+                                        <input type="textarea" name="question">
+                                </label>
+                                <br />
+                        
+                                <label>정답:
+                                        <input type="text" name="answer">
+                                </label>
+                                <br />
+                
+                                <label>난이도:
+                                        <input type="text" name="difficulty">
+                                </label>
+                                <br />
+                                <label>csv 파일 경로:
+                                                <input type="text" name="csv_path">
+                                        </label>
+                                <br />
+                                <table style="width:400px">
+                                        <colgroup>
+                                                <col span="1" style="width: 40%;">
+                                                <col span="1" style="width: 20%;">
+                                                <col span="1" style="width: 40%;">
+                                        </colgroup>
+                                        <thead>
+                                                <tr>
+                                                        <th>키워드</th>
+                                                        <th>키워드배점</th>
+                                                        <th></th>
+                                                </tr>
+                                        </thead>
+                                        <tbody class="keyword list">
+                                                <tr id="row-template3" class="keyword item row">
+                                                        <td class="keyword name"></td>
+                                                        <td class="keyword portion"><input type="text" class="scorePortion3"></td>
+                                                        <td class="keyword button"><a href="javascript:void(0);"><img class="add" src="추가.png" alt="add" width="40px"/></a></td>
+                                                </tr>
+                                        </tbody>
+                                </table>
+        
+                                <input type="submit" value=" 제출">
+                </form>
+         </div>
+        </div>
+        <script>
+            let sub_button = document.getElementById("subj-button");
+            let obj_button = document.getElementById("obj-button");
+            let per_button = document.getElementById("per-button");
+            let subj_container = document.getElementById("subj-container");
+            let obj_container = document.getElementById("obj-container");
+            let per_container = document.getElementById("per-container");
+            let obj_question = 0;
+            let lecture_id = localStorage.getItem("lectureId");
+            let selectedKeywords1 = [];
+            let selectedKeywords2 = [];
+            let selectedKeywords3 = [];
+            let scorePortions1 = [];
+            let scorePortions2 = [];
+            let scorePortions3 = [];
+
+            fetch("http://localhost:3000/lecture_keywords/"+lecture_id, {
+                    method:"get"
+            }).then(res => {
+                    return res.json();
+            }).then(res => {
+                console.log(res);
+                const row_template = document.getElementById("row-template");
+                const tbody = row_template.parentElement;
+                const row_template2 = document.getElementById("row-template1");
+                const tbody2 = row_template2.parentElement;
+                const row_template3 = document.getElementById("row-template3");
+                const tbody3 = row_template3.parentElement;
+
+                for(let i=0; i<res.length; i++) {
+                        let new_template = row_template.cloneNode(true);
+                        new_template.id = "";
+                        let first_td = new_template.getElementsByClassName("keyword name")[0];
+                        first_td.innerText = res[i].keyword;
+                        let button = new_template.getElementsByClassName("keyword button")[0].childNodes[0];
+                        button.onclick = () => {
+                                let scorePortion = new_template.getElementsByClassName("scorePortion")[0].value;
+                                if(scorePortion==""){
+                                        alert("키워드 배점을 입력하세요");
+                                }else{
+                                        let keyId = res[i].keywordId;
+                                        selectedKeywords1.push(keyId);
+                                        scorePortions1.push(scorePortion);
+                                        button.style.display = "none";
+                                }
+                        }
+                        
+                        let new_template2 = row_template2.cloneNode(true);
+                        new_template2.id = "";
+                        let first_td2 = new_template2.getElementsByClassName("keyword name")[0];
+                        first_td2.innerText = res[i].keyword;
+                        let button2 = new_template2.getElementsByClassName("keyword button")[0].childNodes[0];
+                        button2.onclick = () => {
+                                let scorePortion2 = new_template2.getElementsByClassName("scorePortion2")[0].value;
+                                if(scorePortion2==""){
+                                        alert("키워드 배점을 입력하세요");
+                                }else{
+                                        
+                                        let keyId = res[i].keywordId;
+                                        selectedKeywords2.push(keyId);
+                                        scorePortions2.push(scorePortion2);
+                                        button2.style.display = "none";
+                                        //button.style.innerText = "이미 추가된 키워드입니다";
+                                }
+                        }
+
+                        let new_template3 = row_template3.cloneNode(true);
+                        new_template3.id = "";
+                        let first_td3 = new_template3.getElementsByClassName("keyword name")[0];
+                        first_td3.innerText = res[i].keyword;
+                        let button3 = new_template3.getElementsByClassName("keyword button")[0].childNodes[0];
+                        button3.onclick = () => {
+                                let scorePortion3 = new_template3.getElementsByClassName("scorePortion3")[0].value;
+                                if(scorePortion3==""){
+                                        alert("키워드 배점을 입력하세요");
+                                }else{
+                                        
+                                        let keyId = res[i].keywordId;
+                                        selectedKeywords3.push(keyId);
+                                        scorePortions3.push(scorePortion3);
+                                        button3.style.display = "none";
+                                        //button.style.innerText = "이미 추가된 키워드입니다";
+                                }
+                        }
+
+                        
+                        tbody.appendChild(new_template);
+                        subj_container.getElementsByClassName("keyword list")[0].appendChild(new_template2);
+                        per_container.getElementsByClassName("keyword list")[0].appendChild(new_template3);
+                }
+            })
+
+            obj_button.onclick = () => {
+                subj_container.style.display = "none";
+                obj_container.style.display = "block";
+                per_container.style.display = "none";
+                obj_question = 1;
+                
+            }
+
+            sub_button.onclick = () => {
+                subj_container.style.display = "block";
+                obj_container.style.display = "none";
+                per_container.style.display = "none";
+                obj_question = 0;
+            }
+
+            per_button.onclick = () => {
+                obj_container.style.display = "none";
+                per_container.style.display = "block";
+                subj_container.style.display = "none";
+                
+            }
+
+            let lectureId = localStorage.getItem("lectureId");
+            document.forms[0].onsubmit = (e) => {
+                    e.preventDefault();
+                    let data = getFormData(document.forms[0]);
+                    data.type = 1;
+                    data.lecture_id = lectureId;
+                    data.selectedKeywords = selectedKeywords1;
+                    data.scorePortions = scorePortions1;
+                    let bogi_list = [];
+                    let bogi_1 = document.getElementsByName("questionKey1")[0].value;
+                let bogi_2 = document.getElementsByName("questionKey2")[0].value;
+                let bogi_3 = document.getElementsByName("questionKey3")[0].value;
+                let bogi_4 = document.getElementsByName("questionKey4")[0].value;
+                let bogi_5 = document.getElementsByName("questionKey5")[0].value;
+                bogi_list.push(bogi_1);
+                bogi_list.push(bogi_2);
+                bogi_list.push(bogi_3);
+                bogi_list.push(bogi_4);
+                bogi_list.push(bogi_5);
+
+                data.bogis = bogi_list;
+
+                    fetch("http://localhost:3000/questions", {
+                        method:"post",
+                        body:JSON.stringify(data),
+                        headers:{
+                                "Content-Type": "application/json"
+                        }
+                        }).then(res => {
+                                return res.json();
+                        }).then(res => {
+                                console.log(res);
+                        });
+
+                        fetch("http://localhost:3000/lecture_keywords/" + lectureId, {
+                        method:"get"
+                        }).then(res => {
+                                return res.json();
+                        }).then(res => {
+                                console.log(res);
+                        });
+            }
+            document.forms[1].onsubmit = (e) => {
+                    e.preventDefault();
+                    let data = getFormData(document.forms[1]);
+                    data.type = 0;
+                    data.lecture_id = lectureId;
+                    data.selectedKeywords = selectedKeywords2;
+                    data.scorePortions = scorePortions2;
+                    
+                    
+                    fetch("http://localhost:3000/questions", {
+                        method:"post",
+                        body:JSON.stringify(data),
+                        headers:{
+                                "Content-Type": "application/json"
+                        }
+                        }).then(res => {
+                                return res.json();
+                        }).then(res => {
+                                console.log(res);
+                        });
+            }
+            document.forms[2].onsubmit = (e) => {
+                    e.preventDefault();
+                    let data = getFormData(document.forms[1]);
+                    let csv_path = document.getElementsByName("csv_path")[0].value;
+                    data.type = 2;
+                    data.lecture_id = lectureId;
+                    data.selectedKeywords = selectedKeywords3;
+                    data.scorePortions = scorePortions3;
+                    data.csv_path = csv_path;
+                    
+                    fetch("http://localhost:3000/questions", {
+                        method:"post",
+                        body:JSON.stringify(data),
+                        headers:{
+                                "Content-Type": "application/json"
+                        }
+                        }).then(res => {
+                                return res.json();
+                        }).then(res => {
+                                console.log(res);
+                        });
+            }
+        </script>
+         <script src = "js/header.js"></script>
+    </body>
+</html>

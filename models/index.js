@@ -26,20 +26,28 @@ db.Questions = require("./questions")(db.sequelize, db.Datatypes);
 db.QuestionKeywords = require("./question_keywords")(db.sequelize, db.Datatypes);
 db.Solves = require("./solves")(db.sequelize, db.Datatypes);
 db.QuestionBogi = require("./question_bogi")(db.sequelize, db.Datatypes);
+db.QuestionParams = require("./question_params")(db.sequelize, db.Datatypes);
+
+db.BankQuestions = require("./bank_questions")(db.sequelize, db.Datatypes);
+db.BankQuestionKeywords = require("./bank_question_keywords")(db.sequelize, db.Datatypes);
+db.BankQuestionBogi = require("./bank_question_bogi")(db.sequelize, db.Datatypes);
+db.BankQuestionParams = require("./bank_question_params")(db.sequelize, db.Datatypes);
 
 db.Users.hasMany(db.Classes, {foreignKey: {name: "master_id", allowNull: false}});
 db.Users.hasMany(db.UserClasses, {foreignKey: {name: "user_id", allowNull: false, primaryKey: true}});
 db.Users.hasMany(db.Solves, {foreignKey: {name: "user_id", primaryKey: true, allowNull: false}, onDelete: "cascade"});
-db.Classes.hasMany(db.UserClasses, {foreignKey: {name: "class_id", allowNull: false, primaryKey: true}});
+db.Classes.hasMany(db.UserClasses, {foreignKey: {name: "class_id", allowNull: false, primaryKey: true}, onDelete: "cascade"});
 db.Classes.hasMany(db.Lectures, {foreignKey: {name: "class_id", allowNull: false}, onDelete: "cascade"});
 db.UserClasses.belongsTo(db.Classes, {foreignKey: "class_id", targetKey: "classId"});
 db.Lectures.hasMany(db.LectureKeywords, {foreignKey: {name: "lecture_id", allowNull: false}, onDelete: "cascade"});
 db.Lectures.hasMany(db.Questions, {foreignKey: {name: "lecture_id", allowNull: false}, onDelete: "cascade"});
 db.Lectures.hasMany(db.QuestionKeywords, {foreignKey: {name: "lecture_id", allowNull: false}, onDelete: "cascade"});
+db.Lectures.belongsTo(db.Classes, {foreignKey: "class_id", targetKey: "classId"});
 db.LectureKeywords.hasMany(db.QuestionKeywords, {foreignKey: {name: "keyword_id", allowNull: false, primaryKey: true}, onDelete: "cascade"});
 db.Questions.hasMany(db.QuestionKeywords, {foreignKey: {name: "question_id", allowNull: false, primaryKey: true}, onDelete: "cascade"});
 db.Questions.hasMany(db.Solves, {foreignKey: {name: "question_id", primaryKey: true, allowNull: false, primaryKey: true}});
 db.Questions.hasMany(db.QuestionBogi, {foreignKey: {name: "question_id", primaryKey: true, allowNull: false}, onDelete: "cascade"});
+db.Questions.hasMany(db.QuestionParams, {foreignKey: {name: "question_id", primaryKey: true, allowNull: false}, onDelete: "cascade"});
 db.QuestionKeywords.belongsTo(db.Questions, {foreignKey: "question_id", targetKey: "questionId"});
 db.QuestionKeywords.belongsTo(db.LectureKeywords, {foreignKey: "keyword_id", targetKey: "keywordId"});
 db.QuestionBogi.belongsTo(db.Questions, {foreignKey: "question_id", targetKey: "questionId"});
@@ -47,5 +55,9 @@ db.Solves.belongsTo(db.Questions, {foreignKey: "question_id", targetKey: "questi
 db.UserClasses.removeAttribute("id");
 db.QuestionKeywords.removeAttribute("id");
 db.Solves.removeAttribute("id");
+
+db.BankQuestions.hasMany(db.BankQuestionKeywords, {foreignKey: {name: "question_id", primaryKey: true, allowNull: true}, onDelete: "cascade"});
+db.BankQuestions.hasMany(db.BankQuestionBogi, {foreignKey: {name: "question_id", primaryKey: true, allowNull: true}, onDelete: "cascade"});
+db.BankQuestions.hasMany(db.BankQuestionParams, {foreignKey: {name: "question_id", primaryKey: true, allowNull: true}, onDelete: "cascade"});
 
 module.exports = db;

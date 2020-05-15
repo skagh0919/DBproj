@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="header.css">
+            <script src = "js/common.js"></script>
+            <style>#row-template{
+                    display : none
+                }</style>
+    </head>
+    <body>
+        <p class="question">문제내용</p>
+        <p class="answer">답</p>
+        <input type="button" value="닫기" onclick="self.close();">
+        
+        
+        <script>
+            let type = localStorage.getItem("type");
+            let user_id = localStorage.getItem("userId");
+            let question_id = localStorage.getItem("question_id");
+            console.log(question_id);
+            console.log(type);
+            console.log(user_id);
+
+            fetch("http://localhost:3000/questions/?utype="+type+"&question_id="+question_id,{
+                method:"get"
+            }).then(res=>{
+                return res.json();
+            }).then(res=>{
+                console.log(res);
+                console.log(res.question.type);
+                let key_value = res.key_value;
+                let q = document.getElementsByClassName("question")[0];
+                let a = document.getElementsByClassName("answer")[0];
+                q.innerText = res.question.question;
+                a.innerText = res.question.answer;
+                
+            })
+        </script>
+    </body>
+    </html>

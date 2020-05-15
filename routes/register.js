@@ -17,19 +17,19 @@ router.post("/", (req, res) => {
         })
     }
 
-    if(!data.em || !data.pw || !data.utype) {
+    if(!data.email || !data.pw || !data.type) {
         console.log(data);
         res.json({"result": "short"});
         return;
     }
 
-    models.Member.findOne({     // 같은 아이디가 있는지 확인 
+    models.Users.findOne({     // 같은 아이디가 있는지 확인 
         where: {
-            email: data.em
+            email: data.email
         }
     }).then(result => {
         if(!result) {  // 없다는 뜻
-            createMember(data.em, data.pw, data.utype);
+            createMember(data.email, data.pw, data.type);
         } else {
             res.json({"result": "occupied"});
         }

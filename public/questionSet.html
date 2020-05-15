@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="header.css">
+            <script src = "js/common.js"></script>
+            <style>#row-template{
+                    display : none
+                }</style>
+    </head>
+    <body>
+        ---1번 set---
+        <button class="b1">선택</button>
+        <div class = "set1">
+            
+        </div>
+        <form><input type="submit" value=" 제출"></form>
+        <input type="button" value="닫기" onclick="self.close();">
+        
+        
+        <script>
+            let lecture_id = localStorage.getItem("lectureId");
+            let resSet0 = JSON.parse(localStorage.getItem("resSet0"));
+            let idSet = [];
+            console.log(resSet0);
+
+            let set0 = document.getElementsByClassName("set1")[0];
+            for(var i =0; i < resSet0["qSet"].length; i++){
+                set0.innerHTML += "<p>" + resSet0["qSet"][i].question + "</p>";
+            }
+
+	let b1 = document.getElementsByClassName("b1")[0];
+            b1.onclick = () => {
+                idSet = resSet0["idSet"];
+            }
+
+
+            document.forms[0].onsubmit = (e) => {
+                e.preventDefault();
+                let data = getFormData(document.forms[0]);
+
+
+            data.idSet = idSet;
+            data.lecture_id = lecture_id;
+            fetch("http://localhost:3000/question_sets/copy",{
+                method:"post",
+                body:JSON.stringify(data),
+                headers:{
+                        "Content-Type": "application/json"
+                }
+            }).then(res=>{
+                return res.json();
+            }).then(res=>{
+                console.log(res);
+            })
+        }
+            
+
+
+            let type = localStorage.getItem("type");
+            let user_id = localStorage.getItem("userId");
+            let question_id = localStorage.getItem("question_id");
+            console.log(question_id);
+            console.log(type);
+            console.log(user_id);
+
+            
+        </script>
+    </body>
+    </html>

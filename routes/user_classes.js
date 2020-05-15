@@ -4,13 +4,13 @@ let router = express.Router();
 const sequelize = require('sequelize');
 
 // 사용자가 수강 중인 과목들 열람
-router.get("/:id", (req,res) => {
+router.get("/:user_id", (req,res) => {
     
     models.UserClasses.findAll({
         include: [{
             model: models.Classes
         }],
-        where: {user_id: req.params.id}
+        where: {user_id: req.params.user_id}
     }).then(result => {
         res.json(result);
     }).catch(error => {

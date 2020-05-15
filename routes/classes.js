@@ -54,6 +54,7 @@ router.post("/", (req, res) => {
         capacity: data.capacity,
         master_id: data.master_id
     }).then(result => {
+        console.log(result);
         res.json({"result": "success"});
     }).catch(error => {
         console.error(error);
@@ -66,21 +67,26 @@ router.post("/", (req, res) => {
 router.delete("/", (req, res) => {
     let data = req.body;
 
-    if(data.issure !== true || typeof data.class_id !== "number") {
-        res.json({
-            "result": "no_action",
-            "log": "make sure to pass 'issure' parameter and post id"
-        });
-        return;
-    }
-
-    models.Classes.destroy({
-        where: {
-            class_id: data.class_id,
-            master_id: data.master_id
-        }
+    models.Classes.findOne({
+        where:{classId: data.class_id}
     }).then(result => {
-        res.json({"result": "success"});
+        if(result.dataValues.master_id != data.user_id){
+            res.json({"result": "No Authority to delete"});
+            return;
+        }
+
+        models.Classes.destroy({
+            where: {
+                classId: data.class_id,
+                master_id: data.user_id
+            }
+        }).then(result => {
+            res.json({"result": "success"});
+        }).catch(err => {
+            console.error(err);
+            res.json({"result": "failure"});
+        })
+
     }).catch(err => {
         console.error(err);
         res.json({"result": "failure"});

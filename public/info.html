@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="header.css">
+            <script src = "js/common.js"></script>
+            <style>#list_template{
+                    display : none
+                }</style>
+    </head>
+    <body>
+            평균점수: <span class="aver">평균점수</span>
+    </br>
+    </br>
+        <table>
+                <colgroup>
+                <col span="1" style="width: 100px;">
+                <col span="1" style="width: 100px;">
+                <col span="1" style="width: 100px;">
+                <col>
+                </colgroup>
+                <thead>
+                        <tr>
+                                <th style="font-size: 10px">학생 ID</th>
+                                <th style="font-size: 10px">학생 답</th>
+                                <th style="font-size: 10px">점수</th>
+                        </tr>
+                </thead>
+                <tbody class = "keyword_list">
+                        <tr class = "keyword_row" id="list_template">
+                                <td class="stuId" style="font-size: 12px">id</td>
+                                <td class="stuAns" style="font-size: 12px">ans</td>
+                                <td class="stuSco" style="font-size: 12px">sco</td>
+                        </tr>
+                </tbody>
+        </table>
+        <input type="button" value="닫기" onclick="self.close();">
+        
+        
+        <script>
+            let type = localStorage.getItem("type");
+            //let user_id = localStorage.getItem("userId");
+            let question_id = localStorage.getItem("question_id");
+            console.log(question_id);
+            console.log(type);
+            //console.log(user_id);
+            let stu_id = [];
+            let stu_ans = [];
+            let stu_scr = [];
+
+            fetch("http://localhost:3000/solves/"+question_id,{
+                method:"get"
+            }).then(res=>{
+                return res.json();
+            }).then(res=>{
+                console.log(res);
+                console.log(res.each[0].user_id);
+                let ave = document.getElementsByClassName("aver")[0];
+                ave.innerText = res.avg[0].average;
+
+                let list_template = document.getElementById("list_template");
+                let tbody = list_template.parentNode;
+                
+                for(let j=0; j<res.each.length; j++){
+                    let new_template = list_template.cloneNode(true);
+                    new_template.id = "";
+                    let i = new_template.getElementsByClassName("stuId")[0];
+                    i.innerText = res.each[j].user_id;
+                    let a = new_template.getElementsByClassName("stuAns")[0];
+                    a.innerText = res.each[j].stuAnswer;
+                    let s = new_template.getElementsByClassName("stuSco")[0];
+                    s.innerText = res.each[j].score;
+                    tbody.appendChild(new_template);
+                }
+                
+            })
+        </script>
+    </body>
+    </html>

@@ -36,6 +36,7 @@ router.post("/", (req, res) => {
         keyword_id: data.keyword_id,
         scorePortion: data.score_portion
     }).then(result => {
+        console.log(result);
         res.json({"result": "success"});
     }).catch(err => {
         console.error(err);

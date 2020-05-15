@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="header.css"> 
+            <link rel="stylesheet" href="classList.css"> 
+            <script src = "js/common.js"></script>
+    </head>
+    <body>
+            <nav class="menu">
+                    <a href="main.html"><img class="logo" src="logo.png" alt="logo"  style="width:150px"/></a>
+                    <ul class="menu list right">
+                                <li><a class="link bank" href="bank.html">문제은행</a></li>
+                                <li><a class="link takingClass" href="takingClass.html">수강 과목</a></li>
+                    <li><a class="link classList" href="classList.html">과목 목록</a></li>
+                    <li><a class="link createClass" href="createClass.html">과목 생성</a></li>
+                    <li><a class="link login" href="login.html">로그인</a></li>
+                    <li><a class="link register" href="register.html">회원가입</a></li>
+                    </ul>
+            </nav>
+        <div class="lecturelist">
+            <table>
+                <colgroup>
+                <col span="1" style="width: 40%;">
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 10%;">
+                <col>
+                </colgroup>
+                <thead>
+                        <tr>
+                                <th>강의명</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                        </tr>
+                </thead>
+                <tbody class="lecture item">
+                        <tr id="row-template" class="lecture item row">
+                                <td class="lecture title">
+                                        강의 이름
+                                </td>
+                                <td class="lecture bank"><button>문제은행에서 문제 불러오기</button></td>
+                                <td class="lecture button"><button>문제 출제</button></td>
+                                <td class="lecture del"><button>삭제</button></td>
+                                <td class="lecture take"><button>강의보기</button></td>
+                                <td class="lecture check"><button>채점결과</button></td>
+                        </tr>
+                </tbody>
+            </table>
+        </div>
+        <script>
+            
+            let classId = localStorage.getItem("classId");
+            console.log(classId);
+            let type = localStorage.getItem("type");
+            console.log(type);
+            let userId = localStorage.getItem("userId");
+            console.log(userId);
+            fetch("http://localhost:3000/lectures/" + classId, {
+                    method:"get"
+            }).then(res => {
+                    return res.json();
+            }).then(res => {
+                    console.log(res);
+                    const row_template = document.getElementById("row-template");
+                    const tbody = row_template.parentElement;
+                    for(let i=0; i<res.length; i++) {
+                            let new_template = row_template.cloneNode(true);
+                            new_template.id = "";
+                            let a = new_template.getElementsByClassName("lecture title")[0];
+                            a.innerText = res[i].name;
+                            a.href += res[i].lectureId;
+                            //let first_td = new_template.getElementsByClassName("class title")[0];
+                            //let second_td = new_template.getElementsByClassName("class cap")[0];
+                            //first_td.innerText = res[i].name;
+                            //second_td.innerText = res[i].capacity;
+
+                            tbody.appendChild(new_template);
+
+                            let button_del = new_template.getElementsByClassName("lecture del")[0].childNodes[0];
+                            button_del.onclick = () => {
+                                    localStorage.setItem("lectureId", res[i].lectureId);
+                                    let lectureId = localStorage.getItem("lectureId");
+                                    console.log(lectureId);
+                                    
+                                    fetch("http://localhost:3000/lectures", {
+                                            method: "delete",
+                                            body:JSON.stringify({
+                                                lecture_id:lectureId,
+                                                user_id: userId
+                                            }),
+                                            headers:{
+                                                    "Content-Type": "application/json"
+                                            }
+                                            }).then(res=>{
+                                                    return res.json();
+                                            }).then(res=>{
+                                                    console.log(res);
+                                                    if(res.result=="No Authority to delete"){
+                                                                alert("권한이 없습니다");
+                                                        }
+                                            })
+                                            window.location.href = '/lectureList.html';}
+
+                                let button_check = new_template.getElementsByClassName("lecture check")[0].childNodes[0];
+                                button_check.onclick = () => {
+                                localStorage.setItem("lecture_id", res[i].lectureId);
+                                let ecture_id = localStorage.getItem("lecture_id");
+                                window.location.href = '/check.html';}
+
+
+                            
+                            let button_take = new_template.getElementsByClassName("lecture take")[0].childNodes[0];
+                            button_take.onclick = () => {
+                                let startTime = res[i].startTime;
+                                let endTime = res[i].endTime;
+                                let now = new Date();
+                                localStorage.setItem("lecture_id", res[i].lectureId);
+                                
+                                let diff = getTimeDiff(endTime, now);  // 양수면 아직 해도 되는거, 음수면 안되는거
+                                let diff2 = getTimeDiff(now, startTime);   
+                                if(type == "0"){        //학생이면
+                                    console.log(diff);
+                                    if((diff<0)||(diff2<0)){
+                                    alert("강의 수강 가능 시간이 아닙니다");
+                                    }else{
+                                    console.log(diff);
+                                    window.location.href = "/enjoy.html";
+                                    }
+                                }else if(type == "1"){      //강사이면
+                                    console.log(diff);
+                                    window.location.href = "/enjoy.html";
+                                }else{
+                                    console.log();
+                                }
+                                
+                                
+                            }
+
+                            let button = new_template.getElementsByClassName("lecture button")[0].childNodes[0];
+                            button.onclick = () => {
+                                    localStorage.setItem("lectureId", res[i].lectureId);
+                                    let lecture_id = localStorage.getItem("lectureId");
+                                    window.location.href = '/createQuestion.html';
+                                    fetch("http://localhost:3000/lecture_keywords/"+lectureId, {
+                                        method:"get"
+                                    }).then(res => {
+                                        return res.json();
+                                    }).then(res => {
+                                        console.log(res);
+
+                                    })
+
+                                    }
+
+                        let button_bank = new_template.getElementsByClassName("lecture bank")[0].childNodes[0];
+                        button_bank.onclick = () => {
+                                    localStorage.setItem("lectureId", res[i].lectureId);
+                                    let lecture_id = localStorage.getItem("lectureId");
+                                    window.location.href = '/fromBank.html';
+                                    }
+
+                    };
+                    //let new_template = row_template.cloneNode(true);
+                    
+                }
+            ).catch(err => {
+                    console.error(err);
+            })
+
+                
+        </script>
+        <script src = "js/header.js"></script>
+        <script src = "js/lecture.js"></script>
+    </body>
+</html>

@@ -1,0 +1,119 @@
+@font-face { font-family: 'RIDIBatang'; 
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff'); 
+    font-weight: normal; 
+    font-style: normal;
+    font-size: 15px; }
+
+body {
+    font-family: 'RIDIBatang';
+    font-size: 15px;
+    margin: 0;
+}
+
+.menu {
+    font-family: 'RIDIBatang';
+    font-size: 5px;
+    display: inline-block;
+    background-color: rosybrown;
+    height: 50px;
+    width: 100%;
+}
+
+a.link.takingClass {
+    font-family: 'RIDIBatang';
+    font-size: 5px;
+}
+a.link.classList {
+    font-family: 'RIDIBatang';
+    font-size: 5px;
+}
+a.link.createClass {
+    font-family: 'RIDIBatang';
+    font-size: 5px;
+}
+a.link.login {
+    font-family: 'RIDIBatang';
+    font-size: 5px;
+}
+a.link.register {
+    font-family: 'RIDIBatang';
+    font-size: 5px;
+}
+a.link.bank {
+    font-family: 'RIDIBatang';
+    font-size: 5px;
+}
+
+.menu .logo {
+    font-family: 'RIDIBatang';
+    width: 60px;
+    height: 50px;
+    padding-left: 8px;
+}
+
+.menu.list {
+    display: flex;
+    margin: 0;
+}
+
+.menu.list.left {
+    float: left;
+    padding: 3px 0 0 8px;
+}
+
+.menu.list.right {
+    float: right;
+    width: 300px;
+    font-size: 10px;
+    margin-right: 10px;
+}
+
+.menu.list li {
+    list-style: none;
+    width: 120px;
+    text-align: center;
+    font-size: 10px;
+    vertical-align: middle;
+    line-height: 50px;
+}
+
+.menu .link {
+    text-decoration: none;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    display: block;
+}
+
+.main {
+    font-family: 'RIDIBatang';
+    width: 1400px;
+    height: 360px;
+    margin: 0 auto;
+    padding: 10px 20px;
+    background-image: url('bg.png');
+}
+
+.main form {
+    overflow: hidden;
+}
+
+.main form textarea {
+    padding: 1px;
+}
+
+.main form input[type="text"], .main form textarea {
+    display: block;
+    margin: 6px 0 16px 0;
+    width: 98%;
+}
+
+.main form input.buttons {
+    float: right;
+    margin: 0 5px;
+}
+
+.main form p {
+    margin: 0;
+}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="header.css">
+        <script src = "js/common.js"></script>
+    </head>
+    <body>
+            <nav class="menu">
+                    <a href="main.html"><img class="logo" src="logo.png" alt="logo" /></a>
+                    <ul class="menu list right">
+                        <li><a class="link" href="classList.html">과목 목록</a></li>
+                        <li><a class="link createClass" href="createClass.html">과목 생성</a></li>
+                        <li><a class="link login" href="login.html">로그인</a></li>
+                        <li><a class="link register" href="register.html">회원가입</a></li>
+                    </ul>
+            </nav>
+        <form>
+            <label>이메일
+                <input type="text" name="email">
+            </label>
+            <br />
+
+            <label>비밀번호  
+                <input type="text" name="pw">
+            </label>
+            <input type="submit" value="제출">
+        </form>
+        <script>
+            document.forms[0].onsubmit = (e) => {
+                e.preventDefault();
+                console.log("sfasdf");
+                let data = getFormData(document.forms[0]);
+                fetch("http://localhost:3000/login",{
+                    method: "post",
+                    body: JSON.stringify(data),
+                    headers:{
+                        "Content-Type": "application/json"
+                    }
+                }).then(res=>{
+                    return res.json();
+                }).then(res=>{
+                    if(res && (res.result !== "incorrect" && res.result !== "short")) {
+                        localStorage.setItem("userId", res.userId);
+                        localStorage.setItem("type", res.type);
+                        window.location.href = '/main.html';
+                    } else {
+                        alert("로그인 정보가 맞지 않습니다");
+                    }
+                });
+            }
+        </script>
+        <script src = "js/header.js"></script>
+    </body>
+</html>

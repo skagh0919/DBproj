@@ -3,9 +3,10 @@ const express = require("express");
 let models = require("./models");
 let server = express();
 
-//models.sequelize.sync();
-models.sequelize.sync({force: true});  // 테이블 모두 재생성해주는 코드. 데이터는 모두 삭제됨
+models.sequelize.sync();
+//models.sequelize.sync({force: true});  // 테이블 모두 재생성해주는 코드. 데이터는 모두 삭제됨
 
+server.use(express.static(__dirname + '/public'));
 server.use(require("cors")());  // local에서 실행할 때 발생하는 문제 해결
 server.use(express.json());     // application/json Content/type이 오면 이걸로 파싱
 
@@ -20,14 +21,18 @@ server.use((req, res, next) => {
 server.use("/login", require("./routes/login"));                        // 로그인 관련 API
 server.use("/register", require("./routes/register"));                  // 회원가입 관련 API
 server.use("/", require("./routes/index"));                             // 메인 페이지 관련 API
-server.use("/classes", require("./routes/classes"));                    // 과목 페이지 관련 API
+server.use("/classes", require("./routes/classes"));                    // 과목 관련 API
 server.use("/user_classes", require("./routes/user_classes"));          // 사용자와 강의 관계 관련 API
-server.use("/lectures", require("./routes/lectures"));                  // 강의 페이지 관련 API
+server.use("/lectures", require("./routes/lectures"));                  // 강의 관련 API
 server.use("/lecture_keywords", require("./routes/lecture_keywords"));  // 강의 키워드 관련 API
 server.use("/questions", require("./routes/questions"));                // 문제 관련 API
 server.use("/question_keywords", require("./routes/question_keywords"));// 문제의 키워드 관련 API
 server.use("/question_bogi", require("./routes/question_bogi"));        // 문제의 보기 관련 API
-server.use("/solves", require("./routes/solves"));                      // 문제 푼 기록 관련 API
+server.use("/solves", require("./routes/solves"));                      // 문제 풀기 관련 API
+server.use("/question_bank", require("./routes/question_bank"));        // 문제은행 관련 API
+server.use("/question_sets", require("./routes/question_sets"));        // 문제 set 추출 관련 API
+server.use("/bank_question_keywords", require("./routes/bank_question_keywords"));// 문제 은행 내 키워드 관련 API
+server.use("/csv", require("./routes/csv"));                                   // CSV 파일 처리 API
 
 // 404 not found 처리
 server.use((req, res, next) => {

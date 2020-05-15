@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="header.css">
+            <script src = "js/common.js"></script>
+            <style>#row-template{
+                    display : none
+                }</style>
+    </head>
+    <body>
+            <nav class="menu">
+                    <a href="main.html"><img class="logo" src="logo.png" alt="logo"  style="width:150px"/></a>
+                    <ul class="menu list right">
+                            <li><a class="link bank" href="bank.html">문제은행</a></li>
+                            <li><a class="link takingClass" href="takingClass.html">수강 과목</a></li>
+                    <li><a class="link classList" href="classList.html">과목 목록</a></li>
+                    <li><a class="link createClass" href="createClass.html">과목 생성</a></li>
+                    <li><a class="link login" href="login.html">로그인</a></li>
+                    <li><a class="link register" href="register.html">회원가입</a></li>
+                    </ul>
+            </nav>
+
+            <div class = "question">
+                    <table>
+                            <colgroup>
+                            <col span="1" style="width: 10%;">
+                            <col span="1" style="width: 40%;">
+                            <col span="1" style="width: 10%;">
+                            <col span="1" style="width: 10%;">
+                            <col span="1" style="width: 20%;">
+                            <col span="1" style="width: 10%;">
+                            <col>
+                            </colgroup>
+                            <thead>
+                                    <tr>
+                                            <th>문제ID</th>
+                                            <th>문제</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                    </tr>
+                            </thead>
+                            <tbody class="question item">
+                                    <tr id="row-template" class="question item row">
+                                            <td class="question id">문제 ID</td>
+                                            <td class="question title">문제내용</td>
+                                            <td class="question see"><button>문제보기</button></td>
+                                            <td class="question button"><button>문제풀기</button></td>
+                                            <td class="question save"><button>문제은행에 저장하기</button></td>
+                                            <td class="question del"><button>삭제</button></td>
+                                    </tr>
+                            </tbody>
+                        </table>
+                        <form>
+                        <label>csv 파일 경로:
+                            <input type="text" name="csv_path">
+                        </label>
+                        <input type="submit" value=" 제출">
+                        </form>
+            <br />
+            </div>
+
+            <script>
+                 document.forms[0].onsubmit = (e) => {
+                    e.preventDefault();
+                    let data = getFormData(document.forms[0]);
+                let csv_path = document.getElementsByName("csv_path")[0].value;
+                data.filePath = csv_path;
+                fetch("http://localhost:3000/csv", {
+                    method:"post",
+                    body:JSON.stringify(data),
+                        headers:{
+                                "Content-Type": "application/json"
+                        }
+                }).then(res=>{
+                    return res.json();
+                }).then(res=>{
+                    console.log(res);
+                })
+                 }
+                let type = localStorage.getItem("type");
+                let lecture_id = localStorage.getItem("lecture_id");
+                fetch("http://localhost:3000/questions/?utype="+type+"&lecture_id="+lecture_id,{
+                    method:"get"
+                }).then(res=>{
+                    return res.json();
+                }).then(res=>{
+                    console.log(res);
+                    let countQuestion = res.length;
+                    const row_template = document.getElementById("row-template");
+                    const tbody = row_template.parentElement;
+                    for(let i=0; i<res.length; i++) {
+                        let new_template = row_template.cloneNode(true);
+                        new_template.id = "";
+                        let q = new_template.getElementsByClassName("question title")[0];
+                        q.innerText = res[i].question;
+                        let id = new_template.getElementsByClassName("question id")[0];
+                        id.innerText = res[i].question_id;
+
+                        tbody.appendChild(new_template);
+                        let button_see = new_template.getElementsByClassName("question see")[0].childNodes[0];
+                        button_see.onclick = () =>{
+                            let type = localStorage.getItem("type");
+                            let q_type = res[i].type;
+                            localStorage.setItem("question_id",res[i].question_id);
+                            let question_id = localStorage.getItem("question_id");
+                            console.log("question_id: "+question_id);
+                            if(q_type == "1"){  //객관식이면
+                                window.open("seeObj.html","","width=500,height=500");
+                            }else{      //주관식이거나 개별형이면
+                                window.open("seeSub.html","","width=500,height=500");
+                            }
+                         }
+
+                         let button_del = new_template.getElementsByClassName("question del")[0].childNodes[0];
+                                button_del.onclick = () => {
+                                    console.log("으아아아앙");
+                                        localStorage.setItem("question_id", res[i].question_id);
+                                        let question_id = localStorage.getItem("question_id");
+                                        console.log(question_id);
+                                        let user_id= localStorage.getItem("userId");
+                                        console.log(user_id);
+                                        fetch("http://localhost:3000/questions", {
+                                                method: "delete",
+                                                body:JSON.stringify({
+                                                    question_id:question_id,
+                                                    user_id:user_id
+                                                }),
+                                                headers:{
+                                                        "Content-Type": "application/json"
+                                                }
+                                                }).then(res=>{
+                                                        return res.json();
+                                                }).then(res=>{
+                                                        console.log(res);
+                                                        if(res.result=="No Authority to delete"){
+                                                                alert("권한이 없습니다");
+                                                        }
+                                                })
+                                                window.location.href = '/enjoy.html';
+                                }
+
+                        let button_save = new_template.getElementsByClassName("question save")[0].childNodes[0];
+                        button_save.onclick = () =>{
+                            localStorage.setItem("question_id",res[i].question_id);
+                            let question_id = localStorage.getItem("question_id");
+                            let type = localStorage.getItem("type");
+                            let q_type = res[i].type;
+                            
+                            fetch("http://localhost:3000/question_bank/"+question_id,{
+                                method:"post"
+                            }).then(res=>{
+                                return res.json();
+                            }).then(res=>{
+                                console.log(res);
+                            })
+                        }
+                        
+                        let button = new_template.getElementsByClassName("question button")[0].childNodes[0];
+                        button.onclick = () =>{
+                            
+                            let type = localStorage.getItem("type");
+                            let q_type = res[i].type;
+                            localStorage.setItem("question_id",res[i].question_id);
+                            if(q_type == "1"){  //객관식이면
+                                window.open("solveObj.html","","width=500,height=500");
+                            }else{      //주관식이거나 개별형이면
+                                window.open("solveSub.html","","width=500,height=500");
+                            }
+                         }
+                    }
+                }
+            )
+
+                
+            </script>
+            <script src = "js/header.js"></script>
+            <script src = "js/enjoy.js"></script>
+    </body>
+</html>

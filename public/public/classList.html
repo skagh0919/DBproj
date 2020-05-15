@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="header.css"> 
+            <link rel="stylesheet" href="classList.css"> 
+            <script src = "js/common.js"></script>
+    </head>
+    <body>
+            <nav class="menu">
+                    <a href="main.html"><img class="logo" src="logo.png" alt="logo" /></a>
+                    <ul class="menu list right">
+                    <li><a class="link" href="classList.html">과목 목록</a></li>
+                    <li><a class="link createClass" href="createClass.html">과목 생성</a></li>
+                    <li><a class="link login" href="login.html">로그인</a></li>
+                    <li><a class="link register" href="register.html">회원가입</a></li>
+                    </ul>
+            </nav>
+        <div class="classlist">
+            <table>
+                <colgroup>
+                        <col span="1" style="width: 40%;">
+                        <col span="1" style="width: 20%;">
+                        <col span="1" style="width: 10%;">
+                        <col span="1" style="width: 10%;">
+                        <col span="1" style="width: 10%;">
+                        <col span="1" style="width: 10%;">
+                <col>
+                </colgroup>
+                <thead>
+                        <tr>
+                                <th>과목이름</th>
+                                <th>현재 인원</th>
+                                <th>정원</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                        </tr>
+                </thead>
+                <tbody class="class item">
+                        <tr id="row-template" class="class item row">
+                                <td class="class title">
+                                        <a href="lectureList.html">과목 이름</a>
+                                </td>
+                                <td class="class current_num">현재 인원</td>
+                                <td class="class cap">과목 정원</td>
+                                <td class="class button"><button>강의 생성</button></td>
+                                <td class="class button_enjoy"><button>수강신청</button></td>
+                                <td class="class del"><button>삭제</button></td>
+                        </tr>
+                </tbody>
+            </table>
+        </div>
+        <script>
+                fetch("http://localhost:3000/classes", {
+                        method:"get"
+                }).then(res => {
+                        return res.json();
+                }).then(res => {
+                        console.log(res);
+                        const row_template = document.getElementById("row-template");
+                        const tbody = row_template.parentElement;
+                        for(let i=0; i<res.length; i++) {
+                                let new_template = row_template.cloneNode(true);
+                                new_template.id = "";
+                                let a = new_template.childNodes[1].childNodes[1];
+                                a.onclick = () =>{
+                                        localStorage.setItem("classId", res[i].classId);
+                                }
+                                a.innerText = res[i].name;
+                                
+                                //let first_td = new_template.getElementsByClassName("class title")[0];
+                                let second_td = new_template.getElementsByClassName("class cap")[0];
+                                //first_td.innerText = res[i].name;
+                                second_td.innerText = res[i].capacity;
+
+                                let third_td = new_template.getElementsByClassName("class current_num")[0];
+                                third_td.innerText = res[i].current_num;
+
+                                tbody.appendChild(new_template);
+
+                                let button = new_template.getElementsByClassName("class button")[0].childNodes[0];
+                                button.onclick = () => {
+                                        localStorage.setItem("classId", res[i].classId);
+                                        window.location.href = '/createLecture.html';
+                                };
+
+                                let button_del = new_template.getElementsByClassName("class del")[0].childNodes[0];
+                                button_del.onclick = () => {
+                                        localStorage.setItem("classId", res[i].classId);
+                                        let classId = localStorage.getItem("classId");
+                                        console.log(classId);
+                                        let userId = localStorage.getItem("userId");
+                                        console.log(userId);
+                                        fetch("http://localhost:3000/classes", {
+                                                method: "delete",
+                                                body:JSON.stringify({
+                                                        class_id:classId,
+                                                        user_id:userId
+                                                }),
+                                                headers:{
+                                                        "Content-Type": "application/json"
+                                                }
+                                                }).then(res=>{
+                                                        return res.json();
+                                                }).then(res=>{
+                                                        console.log(res);
+                                                })
+                                                window.location.href = '/classList.html';
+                                }
+
+                                let button_enjoy = new_template.getElementsByClassName("class button_enjoy")[0].childNodes[0];
+                                button_enjoy.onclick = () => {
+                                        localStorage.setItem("classId", res[i].classId);
+                                        let classId = localStorage.getItem("classId");
+                                        let userId = localStorage.getItem("userId");
+                                        let type = localStorage.getItem("type");
+                                        
+                                        let capa = res[i].capacity;
+                                        
+                                        let cur_num = res[i].current_num;
+                                        console.log(res[i]);
+                                        
+                                        if(cur_num==capa){
+                                                alert("수강 인원이 모두 찼습니다.");
+                                        }else{
+                                                fetch("http://localhost:3000/user_classes", {
+                                                method:"post",
+                                                body:JSON.stringify({
+                                                        class_id:classId,
+                                                        user_id:userId,
+                                                        type:type
+                                                }),
+                                                headers:{
+                                                        "Content-Type": "application/json"
+                                                }
+                                                }).then(res=>{
+                                                        return res.json();
+                                                }).then(res=>{
+                                                        console.log(res);
+                                                })
+                                        }
+                                        
+                                        
+                                };
+                                
+                        }
+                }).catch(err => {
+                        console.error(err);
+                })
+        </script>
+        <script src = "js/header.js"></script>
+    </body>
+</html>

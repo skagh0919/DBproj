@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="header.css">
+            <script src = "js/common.js"></script>
+            <style>#row-template{
+                    display : none
+                }</style>
+    </head>
+    <body>
+        ---1번 set---
+        <button class="b1">선택</button>
+        <div class = "set1">
+            
+        </div>
+        ---2번 set---
+        <button class="b2">선택</button>
+
+        <div class = "set2">
+        </div>
+        ---3번 set---
+        <button class="b3">선택</button>
+        <div class = "set3">
+        </div>
+        ---4번 set---
+        <button class="b4">선택</button>
+        <div class = "set4">
+        </div>
+        <form><input type="submit" value=" 제출"></form>
+        <input type="button" value="닫기" onclick="self.close();">
+        
+        
+        <script>
+            let lecture_id = localStorage.getItem("lectureId");
+            let resSet0 = JSON.parse(localStorage.getItem("resSet0"));
+            let resSet1 = JSON.parse(localStorage.getItem("resSet1"));
+            let resSet2 = JSON.parse(localStorage.getItem("resSet2"));
+            let resSet3 = JSON.parse(localStorage.getItem("resSet3"));
+            let idSet = [];
+            console.log(resSet0);
+
+            let set0 = document.getElementsByClassName("set1")[0];
+            for(var i =0; i < resSet0["qSet"].length; i++){
+                set0.innerHTML += "<p>" + resSet0["qSet"][i].question + "</p>";
+            }
+
+            let set1 = document.getElementsByClassName("set2")[0];
+            for(var i =0; i < resSet1["qSet"].length; i++){
+                set1.innerHTML += "<p>" + resSet1["qSet"][i].question + "</p>";
+            }
+
+            let set2 = document.getElementsByClassName("set3")[0];
+            for(var i =0; i < resSet2["qSet"].length; i++){
+                set2.innerHTML += "<p>" + resSet2["qSet"][i].question + "</p>";
+            }
+
+            let set3 = document.getElementsByClassName("set4")[0];
+            for(var i =0; i < resSet3["qSet"].length; i++){
+                set3.innerHTML += "<p>" + resSet3["qSet"][i].question + "</p>";
+            }
+
+            let b1 = document.getElementsByClassName("b1")[0];
+            b1.onclick = () => {
+                idSet = resSet0["idSet"];
+            }
+
+            let b2 = document.getElementsByClassName("b2")[0];
+            b2.onclick = () => {
+                idSet = resSet1["idSet"];
+            }
+
+            let b3 = document.getElementsByClassName("b3")[0];
+            b3.onclick = () => {
+                idSet = resSet2["idSet"];
+            }
+
+            let b4 = document.getElementsByClassName("b4")[0];
+            b4.onclick = () => {
+                idSet = resSet3["idSet"];
+            }
+
+            document.forms[0].onsubmit = (e) => {
+                e.preventDefault();
+                let data = getFormData(document.forms[0]);
+
+
+            data.idSet = idSet;
+            data.lecture_id = lecture_id;
+            fetch("http://localhost:3000/question_sets/copy",{
+                method:"post",
+                body:JSON.stringify(data),
+                headers:{
+                        "Content-Type": "application/json"
+                }
+            }).then(res=>{
+                return res.json();
+            }).then(res=>{
+                console.log(res);
+            })
+        }
+            
+
+
+            let type = localStorage.getItem("type");
+            let user_id = localStorage.getItem("userId");
+            let question_id = localStorage.getItem("question_id");
+            console.log(question_id);
+            console.log(type);
+            console.log(user_id);
+
+            
+        </script>
+    </body>
+    </html>

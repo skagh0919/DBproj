@@ -1,19 +1,14 @@
 module.exports = (sequelize, Datatypes) => {
-    return sequelize.define("LectureKeywords", {
-        keywordId: {
+    return sequelize.define("BankQuestionBogi", {
+        bogiId: {
             type: Datatypes.INTEGER(11),
             autoIncrement: true,
             allowNull: false,
-            unique: true,
             primaryKey: true
         },
-		keyword: {
-			type: Datatypes.STRING(255),
-            allowNull: false
-		},
-        weight: {
-            type: Datatypes.FLOAT,
-            allowNull: false
+        bogi: {
+            type: Datatypes.STRING(1023),
+			allowNull: false
         }
     }, {
         underscored: true,
